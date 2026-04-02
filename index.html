@@ -5,22 +5,42 @@
 </head>
 <body>
 
-<h2>My Azure 3-Tier Application</h2>
+<h2>My Azure User App</h2>
 
-<button onclick="getData()">Fetch Data</button>
+<input type="text" id="name" placeholder="Enter name">
+<button onclick="addUser()">Add User</button>
 
-<p id="output"></p>
+<br><br>
+
+<button onclick="getData()">Load Users</button>
+
+<ul id="list"></ul>
 
 <script>
-async function getData() {
-    try {
-        const res = await fetch('https://backend-api-app-i-ccf0ezcccwetgfc0.centralindia-01.azurewebsites.net/data');      
-	    const data = await res.json();
+async function addUser() {
+    const name = document.getElementById("name").value;
 
-        document.getElementById("output").innerText = JSON.stringify(data);
-    } catch (err) {
-        document.getElementById("output").innerText = "Error: " + err;
-    }
+    await fetch('https://backend-api-app-i-ccf0ezcccwetgfc0.centralindia-01.azurewebsites.net/addUser', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name })
+    });
+
+    alert("User Added!");
+}
+
+async function getData() {
+    const res = await fetch('https://backend-api-app-i-ccf0ezcccwetgfc0.centralindia-01.azurewebsites.net/data');
+    const data = await res.json();
+
+    const list = document.getElementById("list");
+    list.innerHTML = "";
+
+    data.forEach(user => {
+        const li = document.createElement("li");
+        li.innerText = user.name;
+        list.appendChild(li);
+    });
 }
 </script>
 
